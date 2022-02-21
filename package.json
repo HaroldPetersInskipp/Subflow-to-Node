@@ -1,5 +1,5 @@
 {
-  "name": "@just-another-pleb/blinker",
+  "name": "@just-another-pleb/node-red-blinker",
   "version": "1.0.0",
   "description": "Alternates output between `msg1` and `msg2` set in node config",
   "main": "example.js",
