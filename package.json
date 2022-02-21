@@ -6,12 +6,21 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Just-another-pleb/YOUR-REPO-NAME-HERE.git"
+  },
   "node-red": {
+    "version": ">=1.2.0",
     "nodes": {
       "Blinker": "example.js"
     }
   },
+  "engines": {
+    "node": ">=12.0.0"  
+  },
   "keywords": [
+    "node-red",
     "toggle",
     "blinker",
     "flasher",
