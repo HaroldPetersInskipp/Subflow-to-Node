@@ -1,0 +1,22 @@
+{
+  "name": "@just-another-pleb/blinker",
+  "version": "1.0.0",
+  "description": "Alternates output between `msg1` and `msg2` set in node config",
+  "main": "example.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "node-red": {
+    "nodes": {
+      "Blinker": "example.js"
+    }
+  },
+  "keywords": [
+    "toggle",
+    "blinker",
+    "flasher",
+    "repeater"
+  ],
+  "author": "Andrew",
+  "license": "MIT"
+}

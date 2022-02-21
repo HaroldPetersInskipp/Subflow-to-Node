@@ -1,0 +1,266 @@
+[
+    {
+        "id": "ca5e1e7f2227fa14",
+        "type": "subflow",
+        "name": "Blinker",
+        "info": "A subflow to send pulsing messages at a given interval to make something *flash*.\n\nConfigurable by setting `environment` variables in the node's settings.\n\n\n# **Output toggle node to send alternating messages at a specified frequency.**\n# \n\n## Configuration\n1 - `delay`:  milliseconds between toggles (defaults to 1 sec)\n\n2 - `msg1`:   text message for state 1  \n\n3 - `msg2`:   text message for state 2\n\nIf `offmsg` is configured it will be sent only when `msg.reset` is recieved.\n\n`msg.topic` is output and alternates between `msg1` and `msg2` to indicate which message is being sent.\n\n## Inputs\nTo start send `msg` (anything)\n\nTo stop, send `msg.reset`\n\n`msg.delay` can be set to override the delay.",
+        "category": "",
+        "in": [
+            {
+                "x": 60,
+                "y": 180,
+                "wires": [
+                    {
+                        "id": "80431f306bf42227"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 900,
+                "y": 180,
+                "wires": [
+                    {
+                        "id": "0666cb89ee9025cf",
+                        "port": 0
+                    },
+                    {
+                        "id": "7f2e332fb32d3422",
+                        "port": 1
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "delay",
+                "type": "num",
+                "value": ""
+            },
+            {
+                "name": "msg1",
+                "type": "str",
+                "value": ""
+            },
+            {
+                "name": "msg2",
+                "type": "str",
+                "value": ""
+            },
+            {
+                "name": "offmsg",
+                "type": "str",
+                "value": ""
+            }
+        ],
+        "meta": {
+            "module": "@just-another-pleb/blinker",
+            "version": "0.1.1",
+            "author": "Andrew",
+            "desc": "Alternates output between `msg1` and `msg2` set in node config",
+            "keywords": "toggle, blinker, flasher, repeater",
+            "license": "MIT"
+        },
+        "color": "#A6BBCF",
+        "icon": "node-red-contrib-bool-gate/switch.png",
+        "status": {
+            "x": 820,
+            "y": 140,
+            "wires": [
+                {
+                    "id": "b1feb246df6a838b",
+                    "port": 0
+                }
+            ]
+        },
+        "flow": [
+            {
+                "id": "a19da66d6694960f",
+                "type": "trigger",
+                "z": "ca5e1e7f2227fa14",
+                "name": "resend every x",
+                "op1": "1",
+                "op2": "0",
+                "op1type": "str",
+                "op2type": "str",
+                "duration": "-1",
+                "extend": false,
+                "overrideDelay": true,
+                "units": "s",
+                "reset": "",
+                "bytopic": "all",
+                "topic": "topic",
+                "outputs": 1,
+                "x": 400,
+                "y": 180,
+                "wires": [
+                    [
+                        "7f2e332fb32d3422"
+                    ]
+                ]
+            },
+            {
+                "id": "7f2e332fb32d3422",
+                "type": "function",
+                "z": "ca5e1e7f2227fa14",
+                "name": "toggle",
+                "func": "const msg1 = {};\nlet c = context.get(\"counter\") ||0;\n\nif (c == 0) {\n    //  0\n    msg.payload = env.get(\"msg1\");\n    msg.topic = \"msg1\";\n} else if (c == 1) {\n    //  1\n    msg.payload = env.get(\"msg2\");\n    msg.topic = \"msg2\";\n};\n\nmsg1.payload = c;\nc = (c + 1) % 2;\ncontext.set(\"counter\",c);\ndelete msg.delay;\nreturn [msg1,msg];",
+                "outputs": 2,
+                "noerr": 0,
+                "initialize": "",
+                "finalize": "",
+                "libs": [],
+                "x": 570,
+                "y": 180,
+                "wires": [
+                    [
+                        "b1feb246df6a838b"
+                    ],
+                    []
+                ]
+            },
+            {
+                "id": "8e3e5f0baa510afb",
+                "type": "switch",
+                "z": "ca5e1e7f2227fa14",
+                "name": "is reset?",
+                "property": "reset",
+                "propertyType": "msg",
+                "rules": [
+                    {
+                        "t": "nnull"
+                    }
+                ],
+                "checkall": "true",
+                "repair": false,
+                "outputs": 1,
+                "x": 380,
+                "y": 140,
+                "wires": [
+                    [
+                        "705f9da2fdc55481",
+                        "490014d846f3ef05"
+                    ]
+                ]
+            },
+            {
+                "id": "705f9da2fdc55481",
+                "type": "switch",
+                "z": "ca5e1e7f2227fa14",
+                "name": "off msg?",
+                "property": "offmsg",
+                "propertyType": "env",
+                "rules": [
+                    {
+                        "t": "nempty"
+                    }
+                ],
+                "checkall": "true",
+                "repair": false,
+                "outputs": 1,
+                "x": 560,
+                "y": 100,
+                "wires": [
+                    [
+                        "0666cb89ee9025cf"
+                    ]
+                ]
+            },
+            {
+                "id": "0666cb89ee9025cf",
+                "type": "change",
+                "z": "ca5e1e7f2227fa14",
+                "name": "set off message",
+                "rules": [
+                    {
+                        "t": "set",
+                        "p": "payload",
+                        "pt": "msg",
+                        "to": "offmsg",
+                        "tot": "env"
+                    },
+                    {
+                        "t": "delete",
+                        "p": "reset",
+                        "pt": "msg"
+                    }
+                ],
+                "action": "",
+                "property": "",
+                "from": "",
+                "to": "",
+                "reg": false,
+                "x": 760,
+                "y": 100,
+                "wires": [
+                    []
+                ]
+            },
+            {
+                "id": "b1feb246df6a838b",
+                "type": "function",
+                "z": "ca5e1e7f2227fa14",
+                "name": "status",
+                "func": "const c = msg.payload;\n\nif (c == 0) {\n    msg.payload = ({text: \"msg1\"});\n} else if (c == 1) {\n    msg.payload = ({text: \"msg2\"});\n} else {\n    msg.payload = ({text:\"\"});\n};\n\nreturn msg;",
+                "outputs": 1,
+                "noerr": 0,
+                "initialize": "",
+                "finalize": "",
+                "libs": [],
+                "x": 710,
+                "y": 140,
+                "wires": [
+                    []
+                ]
+            },
+            {
+                "id": "490014d846f3ef05",
+                "type": "change",
+                "z": "ca5e1e7f2227fa14",
+                "name": "reset",
+                "rules": [
+                    {
+                        "t": "set",
+                        "p": "payload",
+                        "pt": "msg",
+                        "to": "reset",
+                        "tot": "str"
+                    }
+                ],
+                "action": "",
+                "property": "",
+                "from": "",
+                "to": "",
+                "reg": false,
+                "x": 570,
+                "y": 140,
+                "wires": [
+                    [
+                        "b1feb246df6a838b"
+                    ]
+                ]
+            },
+            {
+                "id": "80431f306bf42227",
+                "type": "function",
+                "z": "ca5e1e7f2227fa14",
+                "name": "set msg.delay",
+                "func": "msg.delay = msg.delay || env.get(\"delay\") || 1000;\nreturn msg;",
+                "outputs": 1,
+                "noerr": 0,
+                "initialize": "",
+                "finalize": "",
+                "libs": [],
+                "x": 200,
+                "y": 180,
+                "wires": [
+                    [
+                        "a19da66d6694960f",
+                        "8e3e5f0baa510afb"
+                    ]
+                ]
+            }
+        ]
+    }
+]
